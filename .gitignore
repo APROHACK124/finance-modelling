@@ -9,3 +9,9 @@ investenv
 data
 machine_learning/runs
 machine_learning/tcn/runs
+
+# ML artifacts
+learning/*.pth
+learning/*.pt
+learning/*.ckpt
+learning/*.bin
