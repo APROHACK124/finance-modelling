@@ -1,0 +1,8 @@
+{
+  "overrides": {
+    "loss_hp": {
+      "ic_lambda": 0.0
+    }
+  },
+  "score": 0.08620540227763704
+}

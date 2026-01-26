@@ -1,0 +1,90 @@
+[
+  {
+    "epoch": 1,
+    "train_loss": 0.007977604123464386,
+    "val_mean_daily_ic": 0.2616338715066478,
+    "best_val_mean_daily_ic": 0.2616338715066478,
+    "no_improve": 0,
+    "elapsed_sec": 3.8761353492736816
+  },
+  {
+    "epoch": 2,
+    "train_loss": 0.0062670255716454,
+    "val_mean_daily_ic": -0.0007107376396570664,
+    "best_val_mean_daily_ic": 0.2616338715066478,
+    "no_improve": 1,
+    "elapsed_sec": 7.747028112411499
+  },
+  {
+    "epoch": 3,
+    "train_loss": 0.00622594913519505,
+    "val_mean_daily_ic": 0.13716397682345494,
+    "best_val_mean_daily_ic": 0.2616338715066478,
+    "no_improve": 2,
+    "elapsed_sec": 11.696503400802612
+  },
+  {
+    "epoch": 4,
+    "train_loss": 0.00611788485548459,
+    "val_mean_daily_ic": -0.04182106970760004,
+    "best_val_mean_daily_ic": 0.2616338715066478,
+    "no_improve": 3,
+    "elapsed_sec": 15.584624528884888
+  },
+  {
+    "epoch": 5,
+    "train_loss": 0.006086498684996355,
+    "val_mean_daily_ic": 0.09352428755198221,
+    "best_val_mean_daily_ic": 0.2616338715066478,
+    "no_improve": 4,
+    "elapsed_sec": 19.42900824546814
+  },
+  {
+    "epoch": 6,
+    "train_loss": 0.006003960975102105,
+    "val_mean_daily_ic": 0.16709895857087165,
+    "best_val_mean_daily_ic": 0.2616338715066478,
+    "no_improve": 5,
+    "elapsed_sec": 23.331642627716064
+  },
+  {
+    "epoch": 7,
+    "train_loss": 0.005896046610977796,
+    "val_mean_daily_ic": 0.1416906244685041,
+    "best_val_mean_daily_ic": 0.2616338715066478,
+    "no_improve": 6,
+    "elapsed_sec": 27.309671878814697
+  },
+  {
+    "epoch": 8,
+    "train_loss": 0.005851093234701289,
+    "val_mean_daily_ic": -0.017874520013862968,
+    "best_val_mean_daily_ic": 0.2616338715066478,
+    "no_improve": 7,
+    "elapsed_sec": 31.195759296417236
+  },
+  {
+    "epoch": 9,
+    "train_loss": 0.005735708309230321,
+    "val_mean_daily_ic": -0.058903924643388804,
+    "best_val_mean_daily_ic": 0.2616338715066478,
+    "no_improve": 8,
+    "elapsed_sec": 35.028687953948975
+  },
+  {
+    "epoch": 10,
+    "train_loss": 0.005725081533651858,
+    "val_mean_daily_ic": -0.06318675151611429,
+    "best_val_mean_daily_ic": 0.2616338715066478,
+    "no_improve": 9,
+    "elapsed_sec": 38.87332344055176
+  },
+  {
+    "epoch": 11,
+    "train_loss": 0.005669837460450325,
+    "val_mean_daily_ic": -0.10040189291509709,
+    "best_val_mean_daily_ic": 0.2616338715066478,
+    "no_improve": 10,
+    "elapsed_sec": 42.82977843284607
+  }
+]

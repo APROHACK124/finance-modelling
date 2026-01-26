@@ -1,0 +1,6 @@
+# requirements.txt
+Flask==2.2.2
+Werkzeug==2.3.8
+alpaca-py==0.42.0
+alpaca-trade-apy==3.2.0
+pandas==2.3.1

@@ -1,0 +1,74 @@
+{
+  "lookback": 60,
+  "horizons": [
+    5,
+    20,
+    60
+  ],
+  "price_col": "close",
+  "group_col": "symbol",
+  "timestamp_col": "timestamp",
+  "periods_per_year": 252,
+  "train_frac": 0.7,
+  "val_frac": 0.15,
+  "test_frac": 0.15,
+  "channels": [
+    64,
+    64,
+    64,
+    64
+  ],
+  "kernel_size": 3,
+  "dropout": 0.1,
+  "loss": "smoothl1",
+  "lr": 0.001,
+  "weight_decay": 0.0001,
+  "batch_size": 256,
+  "max_epochs": 50,
+  "patience": 10,
+  "grad_clip": 1.0,
+  "num_workers": 0,
+  "seed": 42,
+  "device": null,
+  "conformal_alphas": [
+    0.1
+  ],
+  "run_base_dir": "runs",
+  "run_name": null,
+  "num_features": 7,
+  "feature_cols": [
+    "open",
+    "high",
+    "low",
+    "close",
+    "volume",
+    "trade_count",
+    "vwap"
+  ],
+  "horizons_sorted": [
+    5,
+    20,
+    60
+  ],
+  "output_dim": 3,
+  "loss_name": "smoothl1",
+  "best_epoch": 9,
+  "best_val_rmse_mean": 0.08916944656494087,
+  "n_samples": {
+    "train": 134688,
+    "val": 29438,
+    "test": 29466
+  },
+  "n_unique_target_timestamps": {
+    "train": 1675,
+    "val": 359,
+    "test": 360
+  },
+  "artifact_type": "torch",
+  "framework": "pytorch",
+  "model_type": "tcn_regressor",
+  "created_at": "2026-01-21 18:05:50",
+  "python_version": "3.12.7",
+  "platform": "Linux-6.14.0-37-generic-x86_64-with-glibc2.39",
+  "torch_version": "2.9.1+cu130"
+}

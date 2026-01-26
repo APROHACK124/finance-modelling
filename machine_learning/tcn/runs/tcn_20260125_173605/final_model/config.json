@@ -1,0 +1,53 @@
+{
+  "num_features": 7,
+  "feature_cols": [
+    "open",
+    "high",
+    "low",
+    "close",
+    "volume",
+    "trade_count",
+    "vwap"
+  ],
+  "horizons_sorted": [
+    5,
+    20,
+    60
+  ],
+  "output_dim": 3,
+  "channels": [
+    64,
+    64,
+    64,
+    64
+  ],
+  "kernel_size": 3,
+  "dropout": 0.1,
+  "lr": 0.001,
+  "weight_decay": 0.0001,
+  "ic_lambda": 0.0,
+  "min_cs_size": 20,
+  "smoothl1_beta": 1.0,
+  "lookback": 60,
+  "target_col": "target_timestamp",
+  "final_epochs": 6,
+  "trained_on": {
+    "train_targets_start": "2019-12-24 05:00:00",
+    "train_targets_end": "2025-07-01 04:00:00",
+    "excluded_test_targets_start": "2025-07-02 04:00:00",
+    "excluded_test_targets_end": "2025-12-30 05:00:00"
+  },
+  "artifact_type": "torch",
+  "framework": "pytorch",
+  "model_type": "tcn_regressor",
+  "created_at": "2026-01-25 18:08:48",
+  "python_version": "3.12.7",
+  "platform": "Linux-6.14.0-37-generic-x86_64-with-glibc2.39",
+  "torch_version": "2.9.1+cu130",
+  "device": "cpu",
+  "horizons": [
+    5,
+    20,
+    60
+  ]
+}

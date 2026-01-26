@@ -1,0 +1,66 @@
+{
+  "lookback": 60,
+  "horizons": [
+    5,
+    20,
+    60
+  ],
+  "price_col": "close",
+  "group_col": "symbol",
+  "timestamp_col": "timestamp",
+  "wf": {
+    "target_col": "target_timestamp",
+    "train_span": 1260,
+    "val_span": 126,
+    "test_span": 126,
+    "step_span": 126,
+    "embargo_span": 0,
+    "min_train_span": 756
+  },
+  "model_hp": {
+    "channels": [
+      64,
+      64,
+      64,
+      64
+    ],
+    "kernel_size": 3,
+    "dropout": 0.1
+  },
+  "train_hp": {
+    "lr": 0.001,
+    "weight_decay": 0.0001,
+    "max_epochs": 50,
+    "patience": 10,
+    "grad_clip": 1.0,
+    "train_max_batch_size": null,
+    "num_workers": 0,
+    "pin_memory": true
+  },
+  "loss_hp": {
+    "ic_lambda": 0.2,
+    "min_cs_size": 20,
+    "smoothl1_beta": 1.0
+  },
+  "eval_hp": {
+    "eval_batch_size": 4096,
+    "quantile": 0.1,
+    "periods_per_year": 252,
+    "cost_bps": 0.0,
+    "trade_horizon": 5
+  },
+  "seed": 42,
+  "device": null,
+  "run_base_dir": "runs",
+  "run_name": null,
+  "verify_atol": 1e-06,
+  "verify_each_fold": true,
+  "horizons_sorted": [
+    5,
+    20,
+    60
+  ],
+  "n_samples": 193592,
+  "n_features": 7,
+  "run_dir": "runs/tcn_20260125_173605"
+}

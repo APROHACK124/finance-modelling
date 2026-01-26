@@ -1,0 +1,47 @@
+let mapleader = ","
+
+let g:tmux_repl_pane = "{right-of}"
+
+function! s:SendToRepl(lines) abort
+  if empty($TMUX)
+    echoerr "No estás en tmux"
+    return
+  endif
+  let l:tmp = tempname()
+  call writefile(a:lines + [''], l:tmp)
+  call system('tmux load-buffer -b vimrepl ' . shellescape(l:tmp))
+  call system('tmux paste-buffer -b vimrepl -t ' . g:tmux_repl_pane)
+  call system('tmux send-keys -t ' . g:tmux_repl_pane . ' Enter')
+endfunction
+
+xnoremap <silent> <leader>r :<C-U>call <SID>SendToRepl(getline("'<","'>"))<CR>
+nnoremap <silent> <leader>r :<C-U>call <SID>SendToRepl([getline('.')])<CR>
+
+function! s:SendCurrentCell() abort
+  let lnum = line('.')
+
+  let start = lnum
+  while start > 1 && getline(start) !~ '^# %%'
+    let start -= 1
+  endwhile
+  if getline(start) =~ '^# %%'
+    let start += 1
+  else
+    let start = 1
+  endif
+
+  let last = line('$')
+  let end = lnum + 1
+  while end <= last && getline(end) !~ '^# %%'
+    let end += 1
+  endwhile
+  if end <= last && getline(end) =~ '^# %%'
+    let end -= 1
+  else
+    let end = last
+  endif
+
+  call <SID>SendToRepl(getline(start, end))
+endfunction
+
+nnoremap <silent> <leader>c :<C-U>call <SID>SendCurrentCell()<CR>

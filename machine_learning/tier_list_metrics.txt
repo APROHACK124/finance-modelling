@@ -1,0 +1,9 @@
+1. DailyRank_IC_mean
+2. DailyRankIC_frac_pos
+3. QuantileSpread_sharpe
+
+4. DailyIC_mean
+5. HitRate deadzone
+6. AUC(Sign)
+
+RMSE, MAE... 

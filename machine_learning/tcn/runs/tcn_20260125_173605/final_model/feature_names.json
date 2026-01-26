@@ -1,0 +1,11 @@
+{
+  "feature_names": [
+    "open",
+    "high",
+    "low",
+    "close",
+    "volume",
+    "trade_count",
+    "vwap"
+  ]
+}

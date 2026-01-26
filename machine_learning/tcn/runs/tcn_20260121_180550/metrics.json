@@ -1,0 +1,233 @@
+{
+  "val": {
+    "5": {
+      "MAE": 0.02763630822300911,
+      "MedianAE": 0.020159773528575897,
+      "RMSE": 0.041292465389129465,
+      "R2": -0.18336713314056396,
+      "HitRate(sign)": 0.4845098172430192,
+      "HitRate(sign,deadzone)": 0.4845098172430192,
+      "PearsonCorr(IC)": -0.010682605127603974,
+      "SpearmanCorr(RankIC)": -0.023646704773762763,
+      "AUC(Sign)": 0.4822653812182853,
+      "N": 29438,
+      "N_deadzone": 29438,
+      "DailyIC_mean": -0.007450446808900397,
+      "DailyIC_std": 0.23621876078727747,
+      "DailyIC_tstat": -0.5976062845087089,
+      "DailyIC_frac_pos": 0.4735376044568245,
+      "DailyIC_N": 359,
+      "DailyRankIC_mean": -0.019963339999460383,
+      "DailyRankIC_std": 0.19492994640265016,
+      "DailyRankIC_tstat": -1.94044735328607,
+      "DailyRankIC_frac_pos": 0.4428969359331476,
+      "DailyRankIC_N": 359,
+      "QuantileSpread_mean": -0.003093631695216641,
+      "QuantileSpread_std": 0.028753494302566376,
+      "QuantileSpread_sharpe": -1.7079621754716305,
+      "QuantileSpread_N": 359,
+      "Conformal_qhat(alpha=0.1)": NaN,
+      "Conformal_coverage(alpha=0.1)": NaN,
+      "Conformal_avg_width(alpha=0.1)": NaN,
+      "Conformal_width_over_std(alpha=0.1)": NaN
+    },
+    "20": {
+      "MAE": 0.05436006188392639,
+      "MedianAE": 0.04190407693386078,
+      "RMSE": 0.07689281256772558,
+      "R2": -0.02686464786529541,
+      "HitRate(sign)": 0.5423262449894694,
+      "HitRate(sign,deadzone)": 0.5423262449894694,
+      "PearsonCorr(IC)": 0.0804775302883569,
+      "SpearmanCorr(RankIC)": 0.06211698012882214,
+      "AUC(Sign)": 0.5294342993320378,
+      "N": 29438,
+      "N_deadzone": 29438,
+      "DailyIC_mean": 0.07147757918358176,
+      "DailyIC_std": 0.11373427633794622,
+      "DailyIC_tstat": 11.907639853730869,
+      "DailyIC_frac_pos": 0.7214484679665738,
+      "DailyIC_N": 359,
+      "DailyRankIC_mean": 0.05868309747705216,
+      "DailyRankIC_std": 0.09981432408884516,
+      "DailyRankIC_tstat": 11.13954323117165,
+      "DailyRankIC_frac_pos": 0.7158774373259053,
+      "DailyRankIC_N": 359,
+      "QuantileSpread_mean": 0.018742623033967065,
+      "QuantileSpread_std": 0.03746826000574223,
+      "QuantileSpread_sharpe": 7.940852250514124,
+      "QuantileSpread_N": 359,
+      "Conformal_qhat(alpha=0.1)": NaN,
+      "Conformal_coverage(alpha=0.1)": NaN,
+      "Conformal_avg_width(alpha=0.1)": NaN,
+      "Conformal_width_over_std(alpha=0.1)": NaN
+    },
+    "60": {
+      "MAE": 0.09692004323005676,
+      "MedianAE": 0.07287678122520447,
+      "RMSE": 0.14932306173796758,
+      "R2": -0.046671509742736816,
+      "HitRate(sign)": 0.5828520959304301,
+      "HitRate(sign,deadzone)": 0.5828520959304301,
+      "PearsonCorr(IC)": 0.08480050809351382,
+      "SpearmanCorr(RankIC)": 0.0934552698314011,
+      "AUC(Sign)": 0.5386016575131811,
+      "N": 29438,
+      "N_deadzone": 29438,
+      "DailyIC_mean": 0.09334456069529626,
+      "DailyIC_std": 0.14473338073353864,
+      "DailyIC_tstat": 12.219896676118243,
+      "DailyIC_frac_pos": 0.7381615598885793,
+      "DailyIC_N": 359,
+      "DailyRankIC_mean": 0.08479698485886639,
+      "DailyRankIC_std": 0.12423280013951174,
+      "DailyRankIC_tstat": 12.932764235283509,
+      "DailyRankIC_frac_pos": 0.7604456824512534,
+      "DailyRankIC_N": 359,
+      "QuantileSpread_mean": 0.0342101348579594,
+      "QuantileSpread_std": 0.07586788272821296,
+      "QuantileSpread_sharpe": 7.158088974992634,
+      "QuantileSpread_N": 359,
+      "Conformal_qhat(alpha=0.1)": NaN,
+      "Conformal_coverage(alpha=0.1)": NaN,
+      "Conformal_avg_width(alpha=0.1)": NaN,
+      "Conformal_width_over_std(alpha=0.1)": NaN
+    }
+  },
+  "test": {
+    "5": {
+      "MAE": 0.03506112098693848,
+      "MedianAE": 0.022961433976888657,
+      "RMSE": 0.08381743250910735,
+      "R2": -0.09344398975372314,
+      "HitRate(sign)": 0.488936401276047,
+      "HitRate(sign,deadzone)": 0.488936401276047,
+      "PearsonCorr(IC)": -0.009411382331518526,
+      "SpearmanCorr(RankIC)": -0.006001547052157056,
+      "AUC(Sign)": 0.49564122902180474,
+      "N": 29466,
+      "N_deadzone": 29466,
+      "DailyIC_mean": -0.012039999911269968,
+      "DailyIC_std": 0.2062709610879465,
+      "DailyIC_tstat": -1.107489562671063,
+      "DailyIC_frac_pos": 0.4638888888888889,
+      "DailyIC_N": 360,
+      "DailyRankIC_mean": 0.0055858618691510134,
+      "DailyRankIC_std": 0.14209787303346774,
+      "DailyRankIC_tstat": 0.7458540718948957,
+      "DailyRankIC_frac_pos": 0.5333333333333333,
+      "DailyRankIC_N": 360,
+      "QuantileSpread_mean": 0.0033696604276580427,
+      "QuantileSpread_std": 0.05665333075584594,
+      "QuantileSpread_sharpe": 0.9441933996156565,
+      "QuantileSpread_N": 360,
+      "Conformal_qhat(alpha=0.1)": NaN,
+      "Conformal_coverage(alpha=0.1)": NaN,
+      "Conformal_avg_width(alpha=0.1)": NaN,
+      "Conformal_width_over_std(alpha=0.1)": NaN
+    },
+    "20": {
+      "MAE": 0.06801681965589523,
+      "MedianAE": 0.0441322848200798,
+      "RMSE": 0.16091349732929947,
+      "R2": -0.028708577156066895,
+      "HitRate(sign)": 0.5374329735966877,
+      "HitRate(sign,deadzone)": 0.5374329735966877,
+      "PearsonCorr(IC)": -0.010590326128598676,
+      "SpearmanCorr(RankIC)": 0.014142280460192084,
+      "AUC(Sign)": 0.5015455505049915,
+      "N": 29466,
+      "N_deadzone": 29466,
+      "DailyIC_mean": -0.0010605107717709468,
+      "DailyIC_std": 0.15683219150727654,
+      "DailyIC_tstat": -0.12830131963501615,
+      "DailyIC_frac_pos": 0.5,
+      "DailyIC_N": 360,
+      "DailyRankIC_mean": 0.030325350457083233,
+      "DailyRankIC_std": 0.10897179959729388,
+      "DailyRankIC_tstat": 5.280109825198814,
+      "DailyRankIC_frac_pos": 0.5555555555555556,
+      "DailyRankIC_N": 360,
+      "QuantileSpread_mean": -0.003943822106036047,
+      "QuantileSpread_std": 0.08766977728246114,
+      "QuantileSpread_sharpe": -0.71411422483934,
+      "QuantileSpread_N": 360,
+      "Conformal_qhat(alpha=0.1)": NaN,
+      "Conformal_coverage(alpha=0.1)": NaN,
+      "Conformal_avg_width(alpha=0.1)": NaN,
+      "Conformal_width_over_std(alpha=0.1)": NaN
+    },
+    "60": {
+      "MAE": 0.1316954642534256,
+      "MedianAE": 0.08162608742713928,
+      "RMSE": 0.287338671304897,
+      "R2": -0.07310938835144043,
+      "HitRate(sign)": 0.5632593497590443,
+      "HitRate(sign,deadzone)": 0.5632593497590443,
+      "PearsonCorr(IC)": -0.046916161565693656,
+      "SpearmanCorr(RankIC)": 0.048499889738781186,
+      "AUC(Sign)": 0.5212981938974555,
+      "N": 29466,
+      "N_deadzone": 29466,
+      "DailyIC_mean": -0.01792174549551814,
+      "DailyIC_std": 0.1501623696201818,
+      "DailyIC_tstat": -2.264490187057492,
+      "DailyIC_frac_pos": 0.4583333333333333,
+      "DailyIC_N": 360,
+      "DailyRankIC_mean": 0.05621451721301699,
+      "DailyRankIC_std": 0.10923271087332785,
+      "DailyRankIC_tstat": 9.764432862937262,
+      "DailyRankIC_frac_pos": 0.6805555555555556,
+      "DailyRankIC_N": 360,
+      "QuantileSpread_mean": -0.05369352105513422,
+      "QuantileSpread_std": 0.17664479972567235,
+      "QuantileSpread_sharpe": -4.82526643120815,
+      "QuantileSpread_N": 360,
+      "Conformal_qhat(alpha=0.1)": NaN,
+      "Conformal_coverage(alpha=0.1)": NaN,
+      "Conformal_avg_width(alpha=0.1)": NaN,
+      "Conformal_width_over_std(alpha=0.1)": NaN
+    }
+  },
+  "conformal": {
+    "alphas": [
+      0.1
+    ],
+    "qhat_by_horizon": {
+      "5": {
+        "0.1": 0.05947606638073921
+      },
+      "20": {
+        "0.1": 0.11344040483236312
+      },
+      "60": {
+        "0.1": 0.19973923414945602
+      }
+    },
+    "test": {
+      "5": {
+        "0.1": {
+          "qhat": 0.05947606638073921,
+          "coverage": 0.8538315346501052,
+          "avg_width": 0.11895214766263962
+        }
+      },
+      "20": {
+        "0.1": {
+          "qhat": 0.11344040483236312,
+          "coverage": 0.8567501527183873,
+          "avg_width": 0.22688078880310059
+        }
+      },
+      "60": {
+        "0.1": {
+          "qhat": 0.19973923414945602,
+          "coverage": 0.8490124210954999,
+          "avg_width": 0.3994784355163574
+        }
+      }
+    }
+  },
+  "best_val_rmse_mean": 0.08916944656494087,
+  "best_epoch": 9
+}

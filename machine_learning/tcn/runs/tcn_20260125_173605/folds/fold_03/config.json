@@ -1,0 +1,63 @@
+{
+  "num_features": 7,
+  "feature_cols": [
+    "open",
+    "high",
+    "low",
+    "close",
+    "volume",
+    "trade_count",
+    "vwap"
+  ],
+  "horizons_sorted": [
+    5,
+    20,
+    60
+  ],
+  "output_dim": 3,
+  "channels": [
+    64,
+    64,
+    64,
+    64
+  ],
+  "kernel_size": 3,
+  "dropout": 0.1,
+  "lr": 0.001,
+  "weight_decay": 0.0001,
+  "max_epochs": 50,
+  "patience": 10,
+  "grad_clip": 1.0,
+  "ic_lambda": 0.0,
+  "min_cs_size": 20,
+  "smoothl1_beta": 1.0,
+  "lookback": 60,
+  "price_col": "close",
+  "group_col": "symbol",
+  "timestamp_col": "timestamp",
+  "target_col": "target_timestamp",
+  "fold": 3,
+  "fold_boundaries": {
+    "train_start_target": "2017-06-23 04:00:00",
+    "train_end_target": "2022-06-24 04:00:00",
+    "val_start_target": "2022-06-27 04:00:00",
+    "val_end_target": "2022-12-22 05:00:00",
+    "test_start_target": "2022-12-23 05:00:00",
+    "test_end_target": "2023-06-27 04:00:00"
+  },
+  "best_epoch": 1,
+  "best_val_mean_daily_ic": 0.2616338715066478,
+  "artifact_type": "torch",
+  "framework": "pytorch",
+  "model_type": "tcn_regressor",
+  "created_at": "2026-01-25 18:01:46",
+  "python_version": "3.12.7",
+  "platform": "Linux-6.14.0-37-generic-x86_64-with-glibc2.39",
+  "torch_version": "2.9.1+cu130",
+  "device": "cpu",
+  "horizons": [
+    5,
+    20,
+    60
+  ]
+}

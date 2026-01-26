@@ -1,0 +1,33 @@
+{
+  "val": {
+    "MAE": 0.13826434314250946,
+    "MedianAE": 0.09265615046024323,
+    "RMSE": 0.30565284976563645,
+    "R2": 0.011327505111694336,
+    "HitRate(sign)": 0.5222125435540069,
+    "HitRate(sign,deadzone)": 0.5280543955455617,
+    "PearsonCorr(IC)": 0.14144687475977855,
+    "SpearmanCorr(RankIC)": 0.16655505317829045,
+    "AUC(Sign)": 0.5231211693510864,
+    "N": 20664,
+    "N_deadzone": 18678,
+    "DailyIC_mean": 0.15864631220829328,
+    "DailyIC_std": 0.12663841710608073,
+    "DailyIC_tstat": 19.886794139367048,
+    "DailyIC_frac_pos": 0.8968253968253969,
+    "DailyIC_N": 252,
+    "DailyRankIC_mean": 0.16615403037394402,
+    "DailyRankIC_std": 0.11288737794138334,
+    "DailyRankIC_tstat": 23.364998906899473,
+    "DailyRankIC_frac_pos": 0.9404761904761905,
+    "DailyRankIC_N": 252,
+    "QuantileSpread_mean": 0.16625738084789307,
+    "QuantileSpread_std": 0.20604148253821103,
+    "QuantileSpread_sharpe": 12.809333672045437,
+    "QuantileSpread_N": 252,
+    "Conformal_qhat(alpha=0.1)": NaN,
+    "Conformal_coverage(alpha=0.1)": NaN,
+    "Conformal_avg_width(alpha=0.1)": NaN,
+    "Conformal_width_over_std(alpha=0.1)": NaN
+  }
+}
