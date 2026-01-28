@@ -15,6 +15,8 @@ from machine_learning.data_collectors import *
 from machine_learning.evaluators import eval_regression
 from machine_learning.models import CNN1DRegressor
 
+
+
 def model_baseline_naive(X_raw_df: pd.DataFrame, y_test: pd.DataFrame, test_sl,
                          horizon: int):
     
@@ -52,6 +54,36 @@ def model_ridge_regression(X_train: pd.DataFrame, X_test: pd.DataFrame, y_train:
 
         for f, c in zip(top_features, coef[top_idx]):
             print(f"{f:40s} {c:+.6f}")
+
+
+import re
+from typing import Iterable, List
+
+_LAGCOL_RE = re.compile(r"^(?P<base>.+)_lag(?P<k>\d+)$")
+
+def _unique_preserve_order(xs: Iterable[str]) -> List[str]:
+    seen = set()
+    out = []
+    for x in xs:
+        if x not in seen:
+            seen.add(x)
+            out.append(x)
+    return out
+
+def _infer_base_features_from_lagged_cols(cols: Iterable[str]) -> List[str]:
+    bases = []
+    for c in cols:
+        m = _LAGCOL_RE.match(str(c))
+        if m:
+            bases.append(m.group("base"))
+    return _unique_preserve_order(bases)
+
+def _looks_lagged_feature_list(features: Iterable[str]) -> bool:
+    for f in features:
+        if _LAGCOL_RE.match(str(f)):
+            return True
+    return False
+
 
 
 import json, os
@@ -2048,25 +2080,135 @@ def _wide_lagged_to_3d(
     return X3
 
 
-def _scale_sequence_3d(scaler: Any, X3: np.ndarray) -> np.ndarray:
+def _scale_sequence_3d(scaler: Any, X3: np.ndarray, *_, **kwargs) -> np.ndarray:
     """
-    Applies scaler for 3D sequence:
-      - if scaler supports .transform(X3) directly, use it
-      - else flatten (N*L, F) like SequenceStandardScaler convention.
+    Compatible con:
+      - scalers que aceptan 3D directo
+      - scalers entrenados en (N*L, F) -> esperan F features
+      - scalers entrenados en (N, F*L) -> esperan F*L features (tu CNN viejo)
+    kwargs opcionales para alinear por nombres:
+      - base_features: list[str]
+      - lookback: int
+      - time_order: "oldest_to_newest" | "newest_to_oldest"
+      - wide_feature_names: list[str] (orden usado en entrenamiento, si no hay feature_names_in_)
     """
+    X3 = np.asarray(X3, dtype=np.float32)
     if scaler is None:
         return X3
+
+    N, F, L = X3.shape
+
+    # 0) custom scalers que soportan 3D
     try:
         out = scaler.transform(X3)
-        return np.asarray(out, dtype=np.float32)
+        out = np.asarray(out, dtype=np.float32)
+        if out.shape == X3.shape:
+            return out
     except Exception:
-        N, F, L = X3.shape
+        pass
+
+    # 1) cuántas features espera el scaler
+    n_in = getattr(scaler, "n_features_in_", None)
+    if n_in is None and hasattr(scaler, "mean_"):
+        try:
+            n_in = int(len(scaler.mean_))
+        except Exception:
+            n_in = None
+
+    base_features = kwargs.get("base_features")
+    time_order = str(kwargs.get("time_order", "oldest_to_newest"))
+    wide_feature_names = kwargs.get("wide_feature_names")
+
+    # Si sklearn guardó nombres, eso es lo más confiable
+    fn_in = getattr(scaler, "feature_names_in_", None)
+    if fn_in is not None:
+        wide_feature_names = list(map(str, fn_in))
+
+    # A) scaler entrenado en wide (espera F*L)
+    if n_in == F * L:
+        # nuestro flatten natural (feature-major sobre X3): (N, F*L)
+        Xw = np.ascontiguousarray(X3).reshape(N, F * L)
+
+        # Si tenemos nombres, reordenamos por nombre para que el scaler reciba exactamente su orden
+        if (base_features is not None) and (wide_feature_names is not None) and (len(wide_feature_names) == F * L):
+            # Nombres en el orden "nuestro" (el que corresponde a Xw)
+            # OJO: L axis en X3 depende de time_order usado al armar X3.
+            lag_nums = list(range(L - 1, -1, -1)) if time_order == "oldest_to_newest" else list(range(0, L))
+            ours_names = [f"{f}_lag{k}" for f in list(base_features) for k in lag_nums]
+
+            pos = {name: i for i, name in enumerate(ours_names)}
+            idx_map = [pos.get(name, -1) for name in list(map(str, wide_feature_names))]
+
+            if all(i >= 0 for i in idx_map):
+                # Pasar a orden del scaler
+                Xw_in = Xw[:, idx_map]
+                Xw_scaled = np.asarray(scaler.transform(Xw_in), dtype=np.float32)
+
+                # Volver a nuestro orden
+                inv = np.empty(len(idx_map), dtype=int)
+                for scaler_i, ours_i in enumerate(idx_map):
+                    inv[ours_i] = scaler_i
+                Xw_scaled = Xw_scaled[:, inv]
+
+                return Xw_scaled.reshape(N, F, L)
+
+        # fallback: asumir que el orden coincide
+        Xw_scaled = np.asarray(scaler.transform(Xw), dtype=np.float32)
+        return Xw_scaled.reshape(N, F, L)
+
+    # B) scaler per-feature (espera F)
+    if n_in == F or n_in is None:
         X2 = np.transpose(X3, (0, 2, 1)).reshape(-1, F)  # (N*L, F)
         X2t = scaler.transform(X2)
-        Xt = np.asarray(X2t, dtype=np.float32).reshape(N, L, F)
-        Xt = np.transpose(Xt, (0, 2, 1))
+        Xt = np.asarray(X2t, dtype=np.float32).reshape(N, L, F).transpose(0, 2, 1)
         return Xt
 
+    # C) último recurso
+    try:
+        Xw = np.ascontiguousarray(X3).reshape(N, F * L)
+        Xw_scaled = scaler.transform(Xw)
+        return np.asarray(Xw_scaled, dtype=np.float32).reshape(N, F, L)
+    except Exception:
+        X2 = np.transpose(X3, (0, 2, 1)).reshape(-1, F)
+        X2t = scaler.transform(X2)
+        return np.asarray(X2t, dtype=np.float32).reshape(N, L, F).transpose(0, 2, 1)
+
+
+def _is_cnn1d_model(model, cfg: dict, model_name: str) -> bool:
+    cls = model.__class__.__name__.lower()
+    if "cnn1d" in cls:
+        return True
+    mn = str(model_name or "").lower()
+    if "cnn" in mn:
+        return True
+    if isinstance(cfg, dict) and ("cnn_config" in cfg):
+        return True
+    return False
+
+
+def _expected_wide_lag_cols_for_seq(
+    *,
+    artifact: dict,
+    scaler: object,
+    base_features: list[str],
+    lookback: int,
+) -> list[str]:
+    # 1) Si el scaler fue fit con DataFrame, sklearn guarda feature_names_in_
+    if scaler is not None and hasattr(scaler, "feature_names_in_"):
+        cols = [str(c) for c in list(scaler.feature_names_in_)]
+        if len(cols) == len(base_features) * int(lookback):
+            return cols
+
+    # 2) Si el artifact guardó feature_names (normal en CNN viejos), usar eso
+    feat = artifact.get("feature_names")
+    if isinstance(feat, (list, tuple)):
+        feat = [str(c) for c in feat]
+        if len(feat) == len(base_features) * int(lookback):
+            return feat
+
+    # 3) Fallback: feature-major, lag ascendente
+    L = int(lookback)
+    return [f"{f}_lag{k}" for f in base_features for k in range(L)]
 
 
 def predict_with_loaded_artifact(
@@ -2112,15 +2254,55 @@ def predict_with_loaded_artifact(
     model = model.to(device)
     model.eval()
 
-    # ---- SEQUENCE MODELS (TCN) ----
+    # ---- SEQUENCE MODELS (TCN/CNN/etc.) ----
     if str(model_name) in _SEQ_MODELS:
-        base_features = list(artifact["feature_names"])  # base feats, not lagged
         lookback = int(_cfg_get(cfg, "lookback", None) or (_parse_lb_h_from_dirname(artifact["run_dir"])[0] or 0))
         if lookback <= 0:
             raise ValueError("No pude inferir lookback (config['lookback'] faltante).")
 
         time_order = _cfg_get(cfg, "seq_order", "oldest_to_newest", aliases=["time_order", "sequence_layout"])
 
+        # base_features: SIEMPRE desde config para modelos seq
+        base_features = cfg.get("base_feature_cols") or cfg.get("base_features")
+        if not base_features:
+            # último recurso: inferir de columnas laggeadas del X
+            base_features = _infer_base_features_from_lagged_cols(list(X.columns))
+        base_features = list(base_features)
+
+        # --- CNN1DRegressor: input 2D (B, C*T) ---
+        if _is_cnn1d_model(model, cfg, model_name):
+            wide_cols = _expected_wide_lag_cols_for_seq(
+                artifact=artifact,
+                scaler=scaler,
+                base_features=base_features,
+                lookback=lookback,
+            )
+
+            Xw = (
+                X.reindex(columns=wide_cols, fill_value=fill_value)
+                .replace([np.inf, -np.inf], np.nan)
+                .fillna(fill_value)
+            )
+
+            if scaler is not None:
+                X_np = np.asarray(scaler.transform(Xw), dtype=np.float32)
+            else:
+                X_np = Xw.to_numpy(dtype=np.float32, copy=False)
+
+            ds = TensorDataset(torch.from_numpy(X_np))
+            loader = DataLoader(ds, batch_size=batch_size, shuffle=False)
+
+            preds = []
+            with torch.no_grad():
+                for (xb,) in loader:
+                    xb = xb.to(device)
+                    yb = model(xb)  # <-- 2D OK
+                    preds.append(yb.detach().cpu().numpy())
+
+            y = np.concatenate(preds, axis=0)
+            return np.asarray(y, dtype=np.float64)
+
+        # --- TCN (u otros que sí esperan 3D): input (B, C, T) ---
         X3 = _wide_lagged_to_3d(
             X,
             base_features=base_features,
@@ -2129,7 +2311,13 @@ def predict_with_loaded_artifact(
             strict=strict,
             fill_value=fill_value,
         )
-        X3 = _scale_sequence_3d(scaler, X3, base_features, fill_value=fill_value)
+        X3 = _scale_sequence_3d(
+            scaler,
+            X3,
+            base_features=base_features,
+            time_order=time_order,
+            wide_feature_names=artifact.get("feature_names"),
+        )
 
         ds = TensorDataset(torch.from_numpy(X3))
         loader = DataLoader(ds, batch_size=batch_size, shuffle=False)
@@ -2138,36 +2326,13 @@ def predict_with_loaded_artifact(
         with torch.no_grad():
             for (xb,) in loader:
                 xb = xb.to(device)
-                yb = model(xb)                 # (B, out_dim)
+                yb = model(xb)  # <-- 3D OK para TCN
                 preds.append(yb.detach().cpu().numpy())
 
         y = np.concatenate(preds, axis=0)
         return np.asarray(y, dtype=np.float64)
 
-    # ---- 2D TORCH MODELS (MLP etc.) ----
-    feat = list(artifact["feature_names"])
-    missing = [c for c in feat if c not in X.columns]
-    if missing and strict:
-        raise ValueError(f"Missing {len(missing)} columns. Example: {missing[:10]}")
-    X_aligned = X.reindex(columns=feat, fill_value=fill_value).replace([np.inf, -np.inf], np.nan).fillna(fill_value)
 
-    if scaler is not None:
-        X_np = scaler.transform(X_aligned).astype(np.float32)
-    else:
-        X_np = X_aligned.to_numpy(dtype=np.float32)
-
-    ds = TensorDataset(torch.from_numpy(X_np))
-    loader = DataLoader(ds, batch_size=batch_size, shuffle=False)
-
-    preds = []
-    with torch.no_grad():
-        for (xb,) in loader:
-            xb = xb.to(device)
-            yb = model(xb)
-            preds.append(yb.detach().cpu().numpy())
-
-    y = np.concatenate(preds, axis=0)
-    return np.asarray(y, dtype=np.float64)
 
 # def predict_artifact_to_compare(
 #     run_dir: str,
@@ -2927,6 +3092,91 @@ def estimate_target_timestamp(timestamps, timeframe: str, horizon: int) -> pd.Da
         return idx + pd.Timedelta(minutes=bars)
     raise ValueError(f"Unidad timeframe no soportada: {unit}")
 
+import numpy as np
+import pandas as pd
+from typing import Any, Dict, List, Tuple
+
+def _build_seq_inference_latest_tail(
+    df: pd.DataFrame,
+    *,
+    base_feature_cols: List[str],
+    lookback: int,
+    group_col: str,
+    timestamp_col: str,
+    price_col: str,
+    select: str,
+    tail_n: int,
+    strict: bool,
+    fill_value: float,
+) -> Tuple[pd.DataFrame, pd.DataFrame]:
+
+    L = int(lookback)
+    base_feature_cols = _unique_preserve_order(list(base_feature_cols))
+    F = len(base_feature_cols)
+
+    if L <= 0:
+        raise ValueError("lookback inválido")
+    if select not in {"latest", "tail"}:
+        raise ValueError("select debe ser 'latest' o 'tail' para modelos secuenciales.")
+
+    # Seguridad: remover duplicados de columnas UNA vez
+    if df.columns.duplicated().any():
+        df = df.loc[:, ~df.columns.duplicated()].copy()
+
+    X_cols = [f"{f}_lag{k}" for f in base_feature_cols for k in range(L)]
+
+    rows = []
+    metas = []
+
+    df = df.sort_values([group_col, timestamp_col], kind="mergesort")
+    has_price = price_col in df.columns
+
+    for sym, g in df.groupby(group_col, sort=False):
+        g = g.reset_index(drop=True)
+        n = len(g)
+
+        end_positions = [n - 1] if select == "latest" else list(range(max(0, n - int(tail_n)), n))
+
+        for end_pos in end_positions:
+            start_pos = end_pos - (L - 1)
+            if start_pos < 0:
+                continue
+
+            window = g.iloc[start_pos : end_pos + 1]
+
+            arr = window.loc[:, base_feature_cols].to_numpy(dtype=np.float32, copy=True)
+
+            if arr.shape != (L, F):
+                raise ValueError(
+                    f"Seq window shape mismatch for symbol={sym}: got {arr.shape}, expected {(L, F)}. "
+                    f"base_feature_cols={base_feature_cols}"
+                )
+
+            arr[~np.isfinite(arr)] = np.nan
+            if strict:
+                if np.isnan(arr).any():
+                    continue
+            else:
+                arr = np.nan_to_num(arr, nan=fill_value, posinf=fill_value, neginf=fill_value).astype(np.float32)
+
+            # lag0=newest,... => invert time
+            xw = arr[::-1, :].T.reshape(F * L)
+            rows.append(xw)
+
+            meta = {group_col: sym, timestamp_col: window[timestamp_col].iloc[-1]}
+            if has_price:
+                meta[price_col] = window[price_col].iloc[-1]
+            metas.append(meta)
+
+    if not rows:
+        raise ValueError("No quedaron filas válidas para inferencia (muy poco histórico vs lookback o NaNs).")
+
+    X_live = pd.DataFrame(np.vstack(rows), columns=X_cols, dtype=np.float32)
+    meta_live = pd.DataFrame(metas)
+    return X_live, meta_live
+
+
+
 
 def build_inference_dataset(
     df: pd.DataFrame,
@@ -2940,91 +3190,149 @@ def build_inference_dataset(
     strict: bool = True,
     fill_value: float = 0.0,
 ) -> Tuple[pd.DataFrame, pd.DataFrame]:
-    """
-    Build X_live + meta_live WITHOUT y_true.
-    For TCN: returns wide-lagged columns {feat}_lag0..lag{lookback-1}.
-    """
+
     cfg = artifact.get("config", {}) or {}
     model_name = artifact.get("model_name", cfg.get("model", "unknown"))
-
-    df = df.copy()
-    df[timestamp_col] = pd.to_datetime(df[timestamp_col])
-    df = df.sort_values([group_col, timestamp_col], kind="mergesort").reset_index(drop=True)
-
-    base_feature_cols = _cfg_get(cfg, "base_feature_cols", None)
-    if not base_feature_cols:
-        raise ValueError("artifact config missing base_feature_cols (necesario para inferencia).")
-
-    lookback = int(_cfg_get(cfg, "lookback", None) or (_parse_lb_h_from_dirname(artifact["run_dir"])[0] or 0))
-    if lookback <= 0:
-        raise ValueError("No pude inferir lookback para build_inference_dataset.")
-
-    lags_by_feature = _cfg_get(cfg, "lags_by_feature", None)
-    default_lags = _cfg_get(cfg, "default_lags", None)
-
     is_seq = str(model_name) in _SEQ_MODELS
 
-    def _lags_for_feature(f: str) -> List[int]:
-        if isinstance(lags_by_feature, dict) and f in lags_by_feature and lags_by_feature[f] is not None:
-            if isinstance(lags_by_feature[f], int):
-                return [x for x in range(lags_by_feature[f])]
-            return [int(x) for x in list(lags_by_feature[f])]
-        if default_lags is not None:
-            if isinstance(default_lags, int):
-                return [x for x in range(default_lags + 1)]
-            return [int(x) for x in list(default_lags)]
-        
-        if lags_by_feature is not None and f in lags_by_feature:
-            v = _as_lag_list(lags_by_feature[f], fallback_lookback=lookback)
-            return v if v is not None else list(range(lookback))
+    df = df.copy()
+    df[timestamp_col] = pd.to_datetime(df[timestamp_col], errors="coerce")
+    df = df.sort_values([group_col, timestamp_col], kind="mergesort").reset_index(drop=True)
 
-        if default_lags is not None:
-            v = _as_lag_list(default_lags, fallback_lookback=lookback)
-            return v if v is not None else list(range(lookback))
-
-        return list(range(lookback))
-
-    # seq requires FULL lags to reshape safely
+    # -----------------------------------------
+    # SEQ (TCN/CNN): tu lógica con base_feature_cols
+    # -----------------------------------------
     if is_seq:
+        base_feature_cols = _cfg_get(cfg, "base_feature_cols", None)
+        if not base_feature_cols:
+            raise ValueError("artifact config missing base_feature_cols (necesario para inferencia seq).")
+        base_feature_cols = _unique_preserve_order(list(base_feature_cols))
+
+        lookback = int(_cfg_get(cfg, "lookback", None) or (_parse_lb_h_from_dirname(artifact["run_dir"])[0] or 0))
+        if lookback <= 0:
+            raise ValueError("No pude inferir lookback para build_inference_dataset.")
+
+        # asegurar base columns exist
         for f in base_feature_cols:
-            l = _lags_for_feature(f)
-            if l != list(range(lookback)):
-                raise ValueError(
-                    f"Modelo secuencial requiere lags completos 0..{lookback-1} para '{f}'. "
-                    f"Config trae {l}. No puedo reconstruir (evito bugs silenciosos)."
-                )
+            if f not in df.columns:
+                if strict:
+                    raise ValueError(f"Falta feature base '{f}' en df_long.")
+                df[f] = float(fill_value)
 
-    # ensure base columns exist
-    for f in base_feature_cols:
-        if f not in df.columns:
+        # recorte mínimo (sin duplicar close)
+        keep = [group_col, timestamp_col] + base_feature_cols
+        if (price_col in df.columns) and (price_col not in keep):
+            keep.append(price_col)
+        keep = _unique_preserve_order(keep)
+        df = df.loc[:, keep].copy()
+        if df.columns.duplicated().any():
+            df = df.loc[:, ~df.columns.duplicated()].copy()
+
+        # fast-path para latest/tail
+        if select in {"latest", "tail"}:
+            need = lookback if select == "latest" else (lookback + int(tail_n) - 1)
+            df_small = (
+                df.groupby(group_col, sort=False, group_keys=False)
+                  .tail(int(need))
+                  .reset_index(drop=True)
+            )
+            return _build_seq_inference_latest_tail(
+                df_small,
+                base_feature_cols=base_feature_cols,
+                lookback=lookback,
+                group_col=group_col,
+                timestamp_col=timestamp_col,
+                price_col=price_col,
+                select=select,
+                tail_n=tail_n,
+                strict=strict,
+                fill_value=fill_value,
+            )
+
+        # select=all: aquí puedes dejar tu camino pesado si lo necesitas
+        # (no lo reescribo acá para no alargar; tu versión anterior sirve)
+
+        # ... tu camino “pesado” seq ...
+        raise ValueError("select='all' en seq no está soportado en esta versión (evita RAM).")
+
+    # -----------------------------------------
+    # NO-SEQ (XGB/MLP/tabular): usar feature_names
+    # -----------------------------------------
+    feature_names = artifact.get("feature_names")
+    if not isinstance(feature_names, (list, tuple)) or len(feature_names) == 0:
+        raise ValueError("artifact missing feature_names (necesario para modelos no-seq).")
+    X_cols = list(map(str, feature_names))
+
+    # Inferir qué columnas base necesitas (incluye indicadores) y qué lags exactos crear
+    raw_cols, lags_map = _infer_raw_cols_and_lags_from_feature_names(
+        X_cols, group_col=group_col, timestamp_col=timestamp_col
+    )
+
+    # asegurar raw cols exist
+    for c in raw_cols:
+        if c not in df.columns:
             if strict:
-                raise ValueError(f"Falta feature base '{f}' en df_long. Revisa build_ml_dataframe/config.")
-            warnings.warn(f"Missing base feature '{f}' -> fill_value", RuntimeWarning)
-            df[f] = float(fill_value)
+                raise ValueError(f"Falta columna base '{c}' requerida por feature_names.")
+            df[c] = float(fill_value)
 
-    # build lagged columns causally: shift(k) within each symbol
-    for f in base_feature_cols:
-        g = df.groupby(group_col, sort=False)[f]
-        for k in _lags_for_feature(f):
-            df[f"{f}_lag{k}"] = g.shift(int(k))
+    # recortar a lo necesario (NO solo base_feature_cols)
+    keep = [group_col, timestamp_col] + raw_cols
+    if (price_col in df.columns) and (price_col not in keep):
+        keep.append(price_col)
+    keep = _unique_preserve_order(keep)
 
-    # choose X columns
-    if is_seq:
-        X_cols = [f"{f}_lag{k}" for f in base_feature_cols for k in range(lookback)]
-    else:
-        X_cols = list(artifact["feature_names"])
+    df = df.loc[:, keep].copy()
+    if df.columns.duplicated().any():
+        df = df.loc[:, ~df.columns.duplicated()].copy()
 
-    X = df[[group_col, timestamp_col] + ([price_col] if price_col in df.columns else []) + X_cols].copy()
+    df = df.sort_values([group_col, timestamp_col], kind="mergesort").reset_index(drop=True)
 
-    # drop warmup rows (NaNs due to lagging)
+    # fast-path para latest/tail (evita crear miles de columnas para todo el histórico)
+    if select in {"latest", "tail"}:
+        # solo necesito hasta max_lag + tail_n filas por símbolo
+        max_lag = max((max(v) for v in lags_map.values()), default=0)
+        need = (max_lag + 1) if select == "latest" else (max_lag + int(tail_n))
+        df_small = (
+            df.groupby(group_col, sort=False, group_keys=False)
+              .tail(int(need))
+              .reset_index(drop=True)
+        )
+        return _build_wide_inference_latest_tail_nonseq(
+            df_small,
+            feature_names=X_cols,
+            lags_map=lags_map,
+            group_col=group_col,
+            timestamp_col=timestamp_col,
+            price_col=price_col,
+            select=select,
+            tail_n=tail_n,
+            strict=strict,
+            fill_value=fill_value,
+        )
+
+    # select='all' (camino pesado): crear lags para todos los rows SOLO para lo requerido
+    for base, lags in lags_map.items():
+        g = df.groupby(group_col, sort=False)[base]
+        for k in lags:
+            df[f"{base}_lag{k}"] = g.shift(int(k))
+
+    missing = [c for c in X_cols if c not in df.columns]
+    if missing and strict:
+        raise ValueError(f"Missing {len(missing)} columns for inference. Example: {missing[:10]}")
+
+    # Armar X+meta y filtrar filas inválidas
+    X = df.reindex(
+        columns=[group_col, timestamp_col] + ([price_col] if price_col in df.columns else []) + X_cols,
+        fill_value=fill_value,
+    ).copy()
+
     X_mat = X[X_cols].replace([np.inf, -np.inf], np.nan)
     mask = np.isfinite(X_mat.to_numpy(dtype=np.float64)).all(axis=1)
     X = X.loc[mask].dropna(subset=X_cols).reset_index(drop=True)
-
     if X.empty:
-        raise ValueError("No quedaron filas válidas para inferencia (rango muy corto vs lookback).")
+        raise ValueError("No quedaron filas válidas para inferencia (rango muy corto vs lags).")
 
-    # apply select per symbol
+    # aplicar select
     if select == "latest":
         idx = X.groupby(group_col, sort=False)[timestamp_col].idxmax()
         X = X.loc[idx].sort_values([group_col, timestamp_col], kind="mergesort").reset_index(drop=True)
@@ -3036,16 +3344,19 @@ def build_inference_dataset(
              .reset_index(drop=True)
         )
     elif select == "all":
-        X = X.reset_index(drop=True)
+        pass
     else:
         raise ValueError("select debe ser 'latest'|'tail'|'all'")
 
     meta_cols = [group_col, timestamp_col]
     if price_col in X.columns:
         meta_cols.append(price_col)
+
     meta_live = X[meta_cols].copy()
     X_live = X[X_cols].copy()
     return X_live, meta_live
+
+
 
 
 def _build_df_long_from_artifact_config(
@@ -3465,3 +3776,145 @@ def smoke_test_artifact_determinism(
         )
 
     return {"max_abs_diff": max_abs, "mean_abs_diff": mean_abs}
+
+import re
+import numpy as np
+import pandas as pd
+from typing import Dict, Any, List, Tuple, Optional
+
+_LAG_RE = re.compile(r"^(?P<base>.+)_lag(?P<k>\d+)$")
+
+def _split_lag(name: str) -> Optional[Tuple[str, int]]:
+    m = _LAG_RE.match(str(name))
+    if not m:
+        return None
+    return m.group("base"), int(m.group("k"))
+
+def _infer_raw_cols_and_lags_from_feature_names(
+    feature_names: List[str],
+    *,
+    group_col: str,
+    timestamp_col: str,
+) -> Tuple[List[str], Dict[str, List[int]]]:
+    """
+    A partir de feature_names (ej: RSI_14_lag3) infiere:
+      - raw_cols: columnas base necesarias en df (ej: RSI_14)
+      - lags_map: base -> lista de lags requeridos
+    """
+    raw_cols: List[str] = []
+    lags_map: Dict[str, set] = {}
+
+    seen = set()
+    for col in feature_names:
+        s = str(col)
+        sp = _split_lag(s)
+        if sp is not None:
+            base, k = sp
+            lags_map.setdefault(base, set()).add(int(k))
+            if base not in seen and base not in {group_col, timestamp_col}:
+                seen.add(base)
+                raw_cols.append(base)
+        else:
+            # feature no laggeada (se toma del "current" timestep)
+            if s not in seen and s not in {group_col, timestamp_col}:
+                seen.add(s)
+                raw_cols.append(s)
+
+    lags_map2 = {b: sorted(list(ks)) for b, ks in lags_map.items()}
+    return raw_cols, lags_map2
+
+
+def _build_wide_inference_latest_tail_nonseq(
+    df: pd.DataFrame,
+    *,
+    feature_names: List[str],
+    lags_map: Dict[str, List[int]],
+    group_col: str,
+    timestamp_col: str,
+    price_col: str,
+    select: str,
+    tail_n: int,
+    strict: bool,
+    fill_value: float,
+) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    """
+    Construye X_live (2D) para modelos NO-secuenciales (XGB, MLP tabular) evitando
+    crear lags para todo el histórico. Solo arma:
+      - latest: 1 fila por símbolo
+      - tail: tail_n filas por símbolo
+    """
+    X_cols = list(map(str, feature_names))
+    col_idx = {c: i for i, c in enumerate(X_cols)}
+    P = len(X_cols)
+
+    # Targets lag y no-lag
+    lag_targets: Dict[str, List[Tuple[int, int]]] = {}
+    direct_targets: List[Tuple[str, int]] = []
+
+    max_lag = 0
+    for c, i in col_idx.items():
+        sp = _split_lag(c)
+        if sp is not None:
+            base, k = sp
+            lag_targets.setdefault(base, []).append((int(k), i))
+            if k > max_lag:
+                max_lag = k
+        else:
+            direct_targets.append((c, i))
+
+    rows = []
+    metas = []
+    has_price = price_col in df.columns
+
+    df = df.sort_values([group_col, timestamp_col], kind="mergesort")
+
+    for sym, g in df.groupby(group_col, sort=False):
+        g = g.reset_index(drop=True)
+        n = len(g)
+
+        if select == "latest":
+            end_positions = [n - 1]
+        else:
+            t = int(tail_n)
+            end_positions = list(range(max(0, n - t), n))
+
+        for end_pos in end_positions:
+            start_pos = end_pos - max_lag
+            if start_pos < 0:
+                continue
+
+            window = g.iloc[start_pos : end_pos + 1]
+            current = window.iloc[-1]
+
+            row = np.empty(P, dtype=np.float32)
+
+            # lag features
+            # window length = max_lag+1, index for lag k: (-1-k) => (len-1-k) => (max_lag-k)
+            for base, pairs in lag_targets.items():
+                vals = window[base].to_numpy(dtype=np.float32, copy=False)
+                for k, j in pairs:
+                    idx_in_window = (len(vals) - 1) - int(k)
+                    row[j] = vals[idx_in_window]
+
+            # direct features (no lag suffix)
+            for c, j in direct_targets:
+                row[j] = np.float32(current[c])
+
+            if strict:
+                if not np.isfinite(row).all():
+                    continue
+            else:
+                row = np.nan_to_num(row, nan=fill_value, posinf=fill_value, neginf=fill_value).astype(np.float32)
+
+            rows.append(row)
+            meta = {group_col: sym, timestamp_col: current[timestamp_col]}
+            if has_price:
+                meta[price_col] = current[price_col]
+            metas.append(meta)
+
+    if not rows:
+        raise ValueError("No quedaron filas válidas para inferencia (muy poco histórico vs max_lag o NaNs).")
+
+    X_live = pd.DataFrame(np.vstack(rows), columns=X_cols, dtype=np.float32)
+    meta_live = pd.DataFrame(metas)
+    return X_live, meta_live
