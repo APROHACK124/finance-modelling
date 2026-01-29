@@ -1,7 +1,6 @@
 .env
 alpaca_env/
 __pycache__/
-data
 .idea
 .vscode
 logs
