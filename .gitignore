@@ -6,7 +6,6 @@ data
 .vscode
 logs
 investenv
-data
 machine_learning/runs
 machine_learning/tcn/runs
 
