@@ -13,3 +13,4 @@ learning/*.pth
 learning/*.pt
 learning/*.ckpt
 learning/*.bin
+data/*
