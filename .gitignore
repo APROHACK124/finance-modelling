@@ -13,4 +13,6 @@ learning/*.pth
 learning/*.pt
 learning/*.ckpt
 learning/*.bin
-data/*
+/data/*
+!/machine_learning/tcn/data/
+!/machine_learning/tcn/data/**
