@@ -790,9 +790,8 @@ def train_final_model(
             "excluded_test_start_target": str(last_fold.test_start),
             "excluded_test_end_target": str(last_fold.test_end),
         },
-        n_test = int(len(y_te))
 
-        "n_samples": {"train": int(len(ds_tr)), "test": n_test},
+        "n_samples": {"train": int(len(ds_tr)), "test": int(len(X_te))},
     })
     n_test = int(len(y_te))  # o X_te_s.shape[0]
 
