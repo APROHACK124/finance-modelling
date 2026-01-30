@@ -105,6 +105,7 @@ class EvalHP:
 
 @dataclass
 class ExperimentConfig:
+    timeframe: Optional[str] = None
     lookback: int = 60
     horizons: Sequence[int] = (5, 20, 60)
     price_col: str = "close"
@@ -163,6 +164,7 @@ def build_artifact_cfg_base(
         # --- Lo mínimo necesario para re-instanciar arquitectura + saber orden de inputs/outputs
         "num_features": int(len(feature_cols)),
         "feature_cols": list(feature_cols),
+        "base_feature_cols": list(feature_cols),
 
         # IMPORTANTE: este orden debe reflejar EXACTAMENTE el orden del output del modelo
         "horizons": horizons_list,
@@ -778,8 +780,15 @@ def train_final_model(
         scaler=scaler,
         sampler_cfg=sampler_cfg,
     )
+
     n_test = int(len(y_te))
+
+    train_symbols = sorted(m_tr[cfg.group_col].astype(str).unique().tolist())
+
     artifact_cfg.update({
+        "timeframe": getattr(cfg, "timeframe", None),  # si lo agregas a ExperimentConfig
+        "symbols": train_symbols,
+        "n_symbols": int(len(train_symbols)),
         "artifact_kind": "final",
         "training_strategy": "fixed_epochs",
         "final_epochs": int(final_epochs),
@@ -791,7 +800,7 @@ def train_final_model(
             "excluded_test_start_target": str(last_fold.test_start),
             "excluded_test_end_target": str(last_fold.test_end),
         },
-
+        "model": "tcn_regressor",
         "n_samples": {"train": int(len(ds_tr)), "test": n_test}
     })
 

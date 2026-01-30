@@ -5,7 +5,7 @@ __pycache__/
 .vscode
 logs
 investenv
-machine_learning/runs
+machine_learning/runs/
 machine_learning/tcn/runs
 learning/*
 

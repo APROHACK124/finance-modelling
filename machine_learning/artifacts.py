@@ -2243,6 +2243,7 @@ def predict_with_loaded_artifact(
     if family != "torch":
         raise ValueError(f"Unknown artifact family: {family}")
 
+
     cfg = artifact.get("config", {}) or {}
     model_name = artifact.get("model_name", cfg.get("model", "torch_model"))
     model = artifact["model"]
@@ -3477,7 +3478,13 @@ def predict_artifact_live(
         fill_value=fill_value,
     )
 
-    y_pred = predict_with_loaded_artifact(
+    if X_live is None or (hasattr(X_live, "__len__") and len(X_live) == 0):
+        raise ValueError(
+            f"No hay muestras para inferencia live. "
+            f"Revisa timeframe/symbols/start/end y que haya lookback suficiente. "
+            f"select={select} tail_n={tail_n}"
+        )
+    y_pred_raw = predict_with_loaded_artifact(
         artifact,
         X_live,
         device=device,
@@ -3485,8 +3492,42 @@ def predict_artifact_live(
         strict=strict,
         fill_value=fill_value,
     )
+    
+    # 2) normaliza retorno raro
+    if y_pred_raw is None:
+        raise ValueError("predict_with_loaded_artifact devolvió None (artifact path o X_live inválido).")
 
-    y_pred = np.asarray(y_pred, dtype=np.float64)
+    if isinstance(y_pred_raw, dict):
+        # intenta extraer predicciones
+        for k in ("y_pred", "pred", "preds", "yhat"):
+            if k in y_pred_raw:
+                y_pred_raw = y_pred_raw[k]
+                break
+        else:
+            raise ValueError(f"predict_with_loaded_artifact devolvió dict con keys={list(y_pred_raw.keys())}")
+
+    if isinstance(y_pred_raw, (tuple, list)) and len(y_pred_raw) == 2 and not np.isscalar(y_pred_raw[0]):
+        # por si devuelve (preds, meta) o similar
+        y_pred_raw = y_pred_raw[0]
+
+    y_pred = np.asarray(y_pred_raw, dtype=np.float64)
+
+    # 3) evita el caso ndim==0 (el que te rompe ahora)
+    if y_pred.ndim == 0:
+        raise ValueError(f"y_pred inválido (ndim=0). type={type(y_pred_raw)} value={y_pred_raw}")
+
+    if y_pred.ndim == 1:
+        y_pred = y_pred.reshape(-1, 1)
+
+    # 4) valida que el output_dim coincide con horizons (si strict)
+    if strict and (y_pred.shape[1] not in (1, len(horizons))):
+        raise ValueError(
+            f"Dimensión de predicción no cuadra: y_pred.shape={y_pred.shape} "
+            f"pero horizons={horizons}. "
+            f"Esto suele indicar que cargaste un artifact equivocado o el modelo fue guardado con otro output_dim."
+        )
+
+
     if y_pred.ndim == 1:
         y_pred = y_pred.reshape(-1, 1)
 
