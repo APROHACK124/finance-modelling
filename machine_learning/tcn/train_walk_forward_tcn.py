@@ -778,6 +778,7 @@ def train_final_model(
         scaler=scaler,
         sampler_cfg=sampler_cfg,
     )
+    n_test = int(len(y_te))
     artifact_cfg.update({
         "artifact_kind": "final",
         "training_strategy": "fixed_epochs",
@@ -790,11 +791,9 @@ def train_final_model(
             "excluded_test_start_target": str(last_fold.test_start),
             "excluded_test_end_target": str(last_fold.test_end),
         },
-        n_test = int(len(y_te))
 
-        "n_samples": {"train": int(len(ds_tr)), "test": n_test},
+        "n_samples": {"train": int(len(ds_tr)), "test": n_test}
     })
-    n_test = int(len(y_te))  # o X_te_s.shape[0]
 
     metrics_out = {
         "test": test_metrics_by_h,
