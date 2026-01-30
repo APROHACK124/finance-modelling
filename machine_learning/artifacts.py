@@ -1077,7 +1077,7 @@ def _batched_torch_predict(
     model: torch.nn.Module,
     X_np: np.ndarray,
     *,
-    device: Union[str, torch.device] = "cpu",
+    device: Union[str, torch.device] = "gpu",
     batch_size: int = 8192,
 ) -> np.ndarray:
     dev = torch.device(device)
@@ -1135,7 +1135,7 @@ def predict_torch_by_run_dir(
     X: pd.DataFrame,
     run_dir: str,
     *,
-    device: Union[str, torch.device] = "cpu",
+    device: Union[str, torch.device] = "gpu",
     batch_size: int = 8192,
     strict: bool = True,
     fill_value: float = 0.0,
@@ -1222,7 +1222,7 @@ def evaluate_saved_torch_models_extended(
     allow_equal_lookback: bool = False,
     return_report: bool = False,
     verbose: bool = False,
-    device: Union[str, torch.device] = "cpu",
+    device: Union[str, torch.device] = "gpu",
     batch_size: int = 8192,
     time_col: str = "timestamp",
     group_col: str = "symbol",
@@ -2710,7 +2710,7 @@ def load_tcn_artifact(run_dir: Union[str, Path], map_location: str = "cpu") -> D
 
 
 
-def load_model_artifact_auto(run_dir: Union[str, Path], map_location: str = "cpu") -> Dict[str, Any]:
+def load_model_artifact_auto(run_dir: Union[str, Path], map_location: str = "gpu") -> Dict[str, Any]:
     """
     Auto-detect loader (arreglado):
     - TCN: solo si config indica explícitamente tcn_regressor (no por "framework == pytorch").
