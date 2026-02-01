@@ -33,7 +33,7 @@ cd "$PROJECT_ROOT"
   $VENV_PY -m fetch_economic_data        2>&1 | sed 's/^/[fetch_economic_data] /'
   $VENV_PY -m fetch_reddit_data          2>&1 | sed 's/^/[fetch_reddit_data] /'
   $VENV_PY -m preprocess_data            2>&1 | sed 's/^/[preprocess_data] /'
-  $VENV_PY -m llm_sentiment_analysis_v2     2>&1 | sed 's/^/[llm_sentiment_analysis_v2] /'
+  $VENV_PY -m llm_sentiment_analysis_v2     2>&1 | sed 's/^/[llm_sentiment_analysis_v3] /'
   
 
   echo "=== RUN END $(date -Iseconds) ==="
