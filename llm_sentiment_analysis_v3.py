@@ -375,7 +375,7 @@ PRED_TABLE = "_02_sentiment_predictions"
 
 SCHEMA_VERSION = "sentiment_v2"
 SCHEMA_VERSION_SENT = "sentiment_v2"
-SCHEMA_VERSION_THREAD = "thread_v1"
+SCHEMA_VERSION_THREAD = "thread_v2"
 
 DDL_PREDICTIONS = f"""
 CREATE TABLE IF NOT EXISTS {PRED_TABLE} (
@@ -1058,7 +1058,7 @@ THREAD_SYSTEM_INSTR = "\n".join([
     "tickers (IMPORTANT):",
     "- tickers MUST be an object mapping tickers to per-ticker sentiment.",
     "- Keys: ticker symbols WITHOUT the $ sign (e.g., TSLA, MSFT, BRK.B).",
-    "- Values: objects with at least {sentiment}. You MAY also include {confidence, relevance, subject} per ticker.",
+    "- Values: objects with at least {sentiment}. You MAY also include {confidence, relevance, subject} per ticker. Otherwise, overall cofidence will be considered.",
     "- Include at most 5 tickers.",
     "- Only include a ticker if it is explicitly present in the text (ticker symbol). Do NOT guess.",
     "",
@@ -1372,7 +1372,7 @@ def run_daily_sentiment_litellm(db_path: Optional[str] = None,
         processed["comments"] += n
         print(f"[comments] +{n}  tot={processed['comments']}")
 
-    while processed["news"] < per_source_cap:
+    while processed["news"] < per_source_cap and not threads_only:
         n = process_sentiment_news_batch_litellm(db_path, batch_size_news, model_name, max_concurrency, schema_version)
         print(f'Processed {n} news')
         if n == 0: break
@@ -1427,4 +1427,4 @@ if __name__ == '__main__':
     TICKER_UNIVERSE = load_ticker_universe(con)
     ALIAS_MAP = load_alias_map(con)
     con.close()
-    run_daily_sentiment_litellm(per_source_cap= 30, batch_size_posts=10, batch_size_comments=10, batch_size_news=15, batch_size_threads=15, model_name="gpt-5-nano", max_concurrency=6, threads_only=True)
+    run_daily_sentiment_litellm(per_source_cap= 5, batch_size_posts=10, batch_size_comments=10, batch_size_news=15, batch_size_threads=5, model_name="gpt-5-nano", max_concurrency=6, threads_only=True)

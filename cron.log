@@ -112853,3 +112853,65 @@ Total new comments added to database: 60
 [llm_sentiment_analysis_v2] [threads] +15  tot=30
 [llm_sentiment_analysis_v2] [DONE sentiment] {'posts': 0, 'comments': 0, 'news': 30, 'threads': 30}
 === RUN END 2026-02-01T13:23:40-05:00 ===
+=== RUN START 2026-02-01T16:33:32-05:00 ===
+[llm_sentiment_analysis_v3] Traceback (most recent call last):
+[llm_sentiment_analysis_v3]   File "<frozen runpy>", line 198, in _run_module_as_main
+[llm_sentiment_analysis_v3]   File "<frozen runpy>", line 88, in _run_code
+[llm_sentiment_analysis_v3]   File "/home/aprohack/Desktop/all_folders/Investings_project/app/llm_sentiment_analysis_v2.py", line 1367, in <module>
+[llm_sentiment_analysis_v3]     run_daily_sentiment_litellm(per_source_cap= 30, batch_size_posts=10, batch_size_comments=10, batch_size_news=15, batch_size_threads=15, model_name="gpt-5-nano", max_concurrency=6, threads_only=True)
+[llm_sentiment_analysis_v3]   File "/home/aprohack/Desktop/all_folders/Investings_project/app/llm_sentiment_analysis_v2.py", line 1313, in run_daily_sentiment_litellm
+[llm_sentiment_analysis_v3]     n = process_sentiment_news_batch_litellm(db_path, batch_size_news, model_name, max_concurrency, schema_version)
+[llm_sentiment_analysis_v3]         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[llm_sentiment_analysis_v3]   File "/home/aprohack/Desktop/all_folders/Investings_project/app/llm_sentiment_analysis_v2.py", line 885, in process_sentiment_news_batch_litellm
+[llm_sentiment_analysis_v3]     write_predictions_to_sqlite(preds, source="news", id_list=out_ids, db_path=db_path, schema_version=schema_version)
+[llm_sentiment_analysis_v3]   File "/home/aprohack/Desktop/all_folders/Investings_project/app/llm_sentiment_analysis_v2.py", line 472, in write_predictions_to_sqlite
+[llm_sentiment_analysis_v3]     con.executemany(f"""
+[llm_sentiment_analysis_v3] sqlite3.OperationalError: database is locked
+[llm_sentiment_analysis_v3] [DB_PATH_DEFAULT] /home/aprohack/Desktop/all_folders/Investings_project/app/data/stock_data.db
+[llm_sentiment_analysis_v3] {'foreign_keys': 1, 'journal_mode': 'wal', 'synchronous': 1}
+=== RUN START 2026-02-01T16:38:51-05:00 ===
+[llm_sentiment_analysis_v3] [DB_PATH_DEFAULT] /home/aprohack/Desktop/all_folders/Investings_project/app/data/stock_data.db
+[llm_sentiment_analysis_v3] {'foreign_keys': 1, 'journal_mode': 'wal', 'synchronous': 1}
+[llm_sentiment_analysis_v3] Processed 15 news
+[llm_sentiment_analysis_v3] [news] +15  tot=15
+[llm_sentiment_analysis_v3] Processed 15 news
+[llm_sentiment_analysis_v3] [news] +15  tot=30
+[llm_sentiment_analysis_v3] [threads] +15  tot=15
+[llm_sentiment_analysis_v3] [threads] +15  tot=30
+[llm_sentiment_analysis_v3] [DONE sentiment] {'posts': 0, 'comments': 0, 'news': 30, 'threads': 30}
+=== RUN END 2026-02-01T16:42:29-05:00 ===
+=== RUN START 2026-02-01T17:09:11-05:00 ===
+=== RUN START 2026-02-01T17:10:47-05:00 ===
+[llm_sentiment_analysis_v3] Traceback (most recent call last):
+[llm_sentiment_analysis_v3]   File "<frozen runpy>", line 198, in _run_module_as_main
+[llm_sentiment_analysis_v3]   File "<frozen runpy>", line 88, in _run_code
+[llm_sentiment_analysis_v3]   File "/home/aprohack/Desktop/all_folders/Investings_project/app/llm_sentiment_analysis_v2.py", line 1367, in <module>
+[llm_sentiment_analysis_v3]     run_daily_sentiment_litellm(per_source_cap= 30, batch_size_posts=10, batch_size_comments=10, batch_size_news=15, batch_size_threads=15, model_name="gpt-5-nano", max_concurrency=6, threads_only=True)
+[llm_sentiment_analysis_v3]   File "/home/aprohack/Desktop/all_folders/Investings_project/app/llm_sentiment_analysis_v2.py", line 1313, in run_daily_sentiment_litellm
+[llm_sentiment_analysis_v3]     n = process_sentiment_news_batch_litellm(db_path, batch_size_news, model_name, max_concurrency, schema_version)
+[llm_sentiment_analysis_v3]         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[llm_sentiment_analysis_v3]   File "/home/aprohack/Desktop/all_folders/Investings_project/app/llm_sentiment_analysis_v2.py", line 885, in process_sentiment_news_batch_litellm
+[llm_sentiment_analysis_v3]     write_predictions_to_sqlite(preds, source="news", id_list=out_ids, db_path=db_path, schema_version=schema_version)
+[llm_sentiment_analysis_v3]   File "/home/aprohack/Desktop/all_folders/Investings_project/app/llm_sentiment_analysis_v2.py", line 472, in write_predictions_to_sqlite
+[llm_sentiment_analysis_v3]     con.executemany(f"""
+[llm_sentiment_analysis_v3] sqlite3.OperationalError: database is locked
+[llm_sentiment_analysis_v3] [DB_PATH_DEFAULT] /home/aprohack/Desktop/all_folders/Investings_project/app/data/stock_data.db
+[llm_sentiment_analysis_v3] {'foreign_keys': 1, 'journal_mode': 'wal', 'synchronous': 1}
+=== RUN START 2026-02-01T17:11:59-05:00 ===
+[llm_sentiment_analysis_v3] [DB_PATH_DEFAULT] /home/aprohack/Desktop/all_folders/Investings_project/app/data/stock_data.db
+[llm_sentiment_analysis_v3] {'foreign_keys': 1, 'journal_mode': 'wal', 'synchronous': 1}
+[llm_sentiment_analysis_v3] Processed 15 news
+[llm_sentiment_analysis_v3] [news] +15  tot=15
+[llm_sentiment_analysis_v3] Processed 15 news
+[llm_sentiment_analysis_v3] [news] +15  tot=30
+[llm_sentiment_analysis_v3] [threads] +15  tot=15
+[llm_sentiment_analysis_v3] [threads] +15  tot=30
+[llm_sentiment_analysis_v3] [DONE sentiment] {'posts': 0, 'comments': 0, 'news': 30, 'threads': 30}
+=== RUN END 2026-02-01T17:16:11-05:00 ===
+=== RUN START 2026-02-01T17:17:17-05:00 ===
+[llm_sentiment_analysis_v3] [DB_PATH_DEFAULT] /home/aprohack/Desktop/all_folders/Investings_project/app/data/stock_data.db
+[llm_sentiment_analysis_v3] {'foreign_keys': 1, 'journal_mode': 'wal', 'synchronous': 1}
+[llm_sentiment_analysis_v3] [threads] +15  tot=15
+[llm_sentiment_analysis_v3] [threads] +15  tot=30
+[llm_sentiment_analysis_v3] [DONE sentiment] {'posts': 0, 'comments': 0, 'news': 0, 'threads': 30}
+=== RUN END 2026-02-01T17:20:10-05:00 ===
