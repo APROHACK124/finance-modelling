@@ -1,0 +1,20 @@
+[project]
+name = "reddit-sentiment-feature-store"
+version = "0.1.0"
+description = "Reddit-only sentiment feature store for tickers and horizons (5/20/60)."
+requires-python = ">=3.10"
+dependencies = [
+    "pandas>=1.5",
+    "numpy>=1.23",
+]
+
+[project.optional-dependencies]
+yaml = ["pyyaml>=6.0"]
+test = ["pytest>=7.0"]
+
+[build-system]
+requires = ["setuptools>=65.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

@@ -1,0 +1,6 @@
+{
+    "min_age_hours": 36.0,
+    "use_fetch_date_as_availability": true,
+    "fetch_date_column": "fetch_date",
+    "fetch_date_assume_utc_if_naive": true
+}
