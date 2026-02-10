@@ -26,13 +26,13 @@ cd "$PROJECT_ROOT"
 
   # Opción A: ejecutar como módulos (recomendado)
   
-  # $VENV_PY -m database_tier1             2>&1 | sed 's/^/[database_tier1] /'
-  # $VENV_PY -m calculate_indicators       2>&1 | sed 's/^/[calculate_indicators] /'
-  # $VENV_PY -m tier2_data_scrapper        2>&1 | sed 's/^/[tier2_data_scrapper] /'
-  # $VENV_PY -m fetch_news_data            2>&1 | sed 's/^/[fetch_news_data] /'
-  # $VENV_PY -m fetch_economic_data        2>&1 | sed 's/^/[fetch_economic_data] /'
-  # $VENV_PY -m fetch_reddit_data          2>&1 | sed 's/^/[fetch_reddit_data] /'
-  # $VENV_PY -m preprocess_data            2>&1 | sed 's/^/[preprocess_data] /'
+  $VENV_PY -m database_tier1             2>&1 | sed 's/^/[database_tier1] /'
+  $VENV_PY -m calculate_indicators       2>&1 | sed 's/^/[calculate_indicators] /'
+  $VENV_PY -m tier2_data_scrapper        2>&1 | sed 's/^/[tier2_data_scrapper] /'
+  $VENV_PY -m fetch_news_data            2>&1 | sed 's/^/[fetch_news_data] /'
+  $VENV_PY -m fetch_economic_data        2>&1 | sed 's/^/[fetch_economic_data] /'
+  $VENV_PY -m fetch_reddit_data          2>&1 | sed 's/^/[fetch_reddit_data] /'
+  $VENV_PY -m preprocess_data            2>&1 | sed 's/^/[preprocess_data] /'
   $VENV_PY -m llm_sentiment_analysis_v3     2>&1 | sed 's/^/[llm_sentiment_analysis_v3] /'
   
 

@@ -1,0 +1,83 @@
+{
+  "saved_at": "2026-02-03T02:55:24.656423+00:00",
+  "meta": {
+    "run_meta": {
+      "run_id": "TCN_annual_TCN_h22_lb60_8f3e681a98947d50",
+      "model_version": "TCN_h22_lb60_8f3e681a98947d50",
+      "config_hash": "8f3e681a98947d50",
+      "created_at": "2026-02-03T02:54:26.125879+00:00"
+    },
+    "fold": {
+      "fold_id": "2020",
+      "val_year": "2020",
+      "horizon_td": "22",
+      "train_start_date": "2016-01-04 05:00:00",
+      "train_fit_end_date": "2019-12-31 05:00:00",
+      "train_last_labeled_date": "2019-11-27 05:00:00",
+      "val_start_date": "2020-01-02 05:00:00",
+      "val_end_date": "2020-12-31 05:00:00",
+      "val_last_labeled_date": "2020-12-31 05:00:00",
+      "global_last_labeled_date": "2025-11-26 05:00:00",
+      "schedule_created_at": "2026-02-03T02:54:26.731559+00:00"
+    },
+    "train_info": {
+      "train_size": 64278,
+      "val_size": 7533,
+      "best_val_mean_dailyIC": 0.14598522598129204
+    },
+    "model_cfg": {
+      "kernel_size": 3,
+      "channels": [
+        32,
+        32,
+        32
+      ],
+      "dropout": 0.1,
+      "lr": 0.001,
+      "batch_size": 512,
+      "epochs": 40,
+      "weight_decay": 0.0,
+      "grad_clip": 1.0,
+      "patience": 8,
+      "min_delta": 0.0001,
+      "val_frac": 0.1,
+      "eval_batch_size": 8192,
+      "log_every": 1
+    },
+    "lookback": 60,
+    "horizon_td": 22,
+    "feature_cols": [
+      "open",
+      "high",
+      "low",
+      "close",
+      "volume",
+      "trade_count",
+      "vwap"
+    ]
+  },
+  "bundle_info": {
+    "train_size": 64278,
+    "val_size": 7533,
+    "best_val_mean_dailyIC": 0.14598522598129204,
+    "cfg": {
+      "kernel_size": 3,
+      "channels": [
+        32,
+        32,
+        32
+      ],
+      "dropout": 0.1,
+      "lr": 0.001,
+      "batch_size": 512,
+      "epochs": 40,
+      "weight_decay": 0.0,
+      "grad_clip": 1.0,
+      "patience": 8,
+      "min_delta": 0.0001,
+      "val_frac": 0.1,
+      "eval_batch_size": 8192,
+      "log_every": 1
+    }
+  }
+}

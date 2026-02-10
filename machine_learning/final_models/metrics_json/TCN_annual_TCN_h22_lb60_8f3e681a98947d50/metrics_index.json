@@ -1,0 +1,110 @@
+[
+  {
+    "fold_id": 2017,
+    "val_year": 2017,
+    "train_fit_end_date": "2016-12-30T05:00:00",
+    "train_last_labeled_date": "2016-11-29T05:00:00",
+    "val_start_date": "2017-01-03T05:00:00",
+    "val_end_date": "2017-12-29T05:00:00",
+    "val_last_labeled_date": "2017-12-29T05:00:00",
+    "n_pred_rows": 19829,
+    "n_eval_rows": 19829,
+    "metrics_path": "metrics_json/TCN_annual_TCN_h22_lb60_8f3e681a98947d50/fold_2017_metrics.json"
+  },
+  {
+    "fold_id": 2018,
+    "val_year": 2018,
+    "train_fit_end_date": "2017-12-29T05:00:00",
+    "train_last_labeled_date": "2017-11-28T05:00:00",
+    "val_start_date": "2018-01-02T05:00:00",
+    "val_end_date": "2018-12-31T05:00:00",
+    "val_last_labeled_date": "2018-12-31T05:00:00",
+    "n_pred_rows": 19905,
+    "n_eval_rows": 19905,
+    "metrics_path": "metrics_json/TCN_annual_TCN_h22_lb60_8f3e681a98947d50/fold_2018_metrics.json"
+  },
+  {
+    "fold_id": 2019,
+    "val_year": 2019,
+    "train_fit_end_date": "2018-12-31T05:00:00",
+    "train_last_labeled_date": "2018-11-27T05:00:00",
+    "val_start_date": "2019-01-02T05:00:00",
+    "val_end_date": "2019-12-31T05:00:00",
+    "val_last_labeled_date": "2019-12-31T05:00:00",
+    "n_pred_rows": 20394,
+    "n_eval_rows": 20394,
+    "metrics_path": "metrics_json/TCN_annual_TCN_h22_lb60_8f3e681a98947d50/fold_2019_metrics.json"
+  },
+  {
+    "fold_id": 2020,
+    "val_year": 2020,
+    "train_fit_end_date": "2019-12-31T05:00:00",
+    "train_last_labeled_date": "2019-11-27T05:00:00",
+    "val_start_date": "2020-01-02T05:00:00",
+    "val_end_date": "2020-12-31T05:00:00",
+    "val_last_labeled_date": "2020-12-31T05:00:00",
+    "n_pred_rows": 20493,
+    "n_eval_rows": 20493,
+    "metrics_path": "metrics_json/TCN_annual_TCN_h22_lb60_8f3e681a98947d50/fold_2020_metrics.json"
+  },
+  {
+    "fold_id": 2021,
+    "val_year": 2021,
+    "train_fit_end_date": "2020-12-31T05:00:00",
+    "train_last_labeled_date": "2020-11-30T05:00:00",
+    "val_start_date": "2021-01-04T05:00:00",
+    "val_end_date": "2021-12-31T05:00:00",
+    "val_last_labeled_date": "2021-12-31T05:00:00",
+    "n_pred_rows": 20534,
+    "n_eval_rows": 20534,
+    "metrics_path": "metrics_json/TCN_annual_TCN_h22_lb60_8f3e681a98947d50/fold_2021_metrics.json"
+  },
+  {
+    "fold_id": 2022,
+    "val_year": 2022,
+    "train_fit_end_date": "2021-12-31T05:00:00",
+    "train_last_labeled_date": "2021-11-30T05:00:00",
+    "val_start_date": "2022-01-03T05:00:00",
+    "val_end_date": "2022-12-30T05:00:00",
+    "val_last_labeled_date": "2022-12-30T05:00:00",
+    "n_pred_rows": 20582,
+    "n_eval_rows": 20582,
+    "metrics_path": "metrics_json/TCN_annual_TCN_h22_lb60_8f3e681a98947d50/fold_2022_metrics.json"
+  },
+  {
+    "fold_id": 2023,
+    "val_year": 2023,
+    "train_fit_end_date": "2022-12-30T05:00:00",
+    "train_last_labeled_date": "2022-11-29T05:00:00",
+    "val_start_date": "2023-01-03T05:00:00",
+    "val_end_date": "2023-12-29T05:00:00",
+    "val_last_labeled_date": "2023-12-29T05:00:00",
+    "n_pred_rows": 20500,
+    "n_eval_rows": 20500,
+    "metrics_path": "metrics_json/TCN_annual_TCN_h22_lb60_8f3e681a98947d50/fold_2023_metrics.json"
+  },
+  {
+    "fold_id": 2024,
+    "val_year": 2024,
+    "train_fit_end_date": "2023-12-29T05:00:00",
+    "train_last_labeled_date": "2023-11-28T05:00:00",
+    "val_start_date": "2024-01-02T05:00:00",
+    "val_end_date": "2024-12-31T05:00:00",
+    "val_last_labeled_date": "2024-12-31T05:00:00",
+    "n_pred_rows": 20664,
+    "n_eval_rows": 20664,
+    "metrics_path": "metrics_json/TCN_annual_TCN_h22_lb60_8f3e681a98947d50/fold_2024_metrics.json"
+  },
+  {
+    "fold_id": 2025,
+    "val_year": 2025,
+    "train_fit_end_date": "2024-12-31T05:00:00",
+    "train_last_labeled_date": "2024-11-27T05:00:00",
+    "val_start_date": "2025-01-02T05:00:00",
+    "val_end_date": "2025-12-30T05:00:00",
+    "val_last_labeled_date": "2025-11-26T05:00:00",
+    "n_pred_rows": 20364,
+    "n_eval_rows": 18560,
+    "metrics_path": "metrics_json/TCN_annual_TCN_h22_lb60_8f3e681a98947d50/fold_2025_metrics.json"
+  }
+]

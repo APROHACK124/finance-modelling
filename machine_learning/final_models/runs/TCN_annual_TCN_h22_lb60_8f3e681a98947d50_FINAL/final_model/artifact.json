@@ -1,0 +1,83 @@
+{
+  "saved_at": "2026-02-03T03:01:15.399481+00:00",
+  "meta": {
+    "created_at": "2026-02-03T03:01:15.397761+00:00",
+    "run_id": "TCN_annual_TCN_h22_lb60_8f3e681a98947d50_FINAL",
+    "model_version": "TCN_h22_lb60_8f3e681a98947d50",
+    "base_walk_forward_run_id": "TCN_annual_TCN_h22_lb60_8f3e681a98947d50",
+    "fold": {
+      "fold_id": 2026,
+      "val_year": 2026,
+      "horizon_td": 22,
+      "train_start_date": "2016-01-04 05:00:00",
+      "train_fit_end_date": "2025-12-30 05:00:00",
+      "train_last_labeled_date": "2025-11-26 05:00:00",
+      "val_start_date": "NaT",
+      "val_end_date": "NaT",
+      "val_last_labeled_date": "NaT",
+      "global_last_labeled_date": "2025-11-26 05:00:00",
+      "schedule_created_at": "2026-02-03T03:00:48.557199+00:00",
+      "is_final_fold": true,
+      "based_on_last_val_year": 2025
+    },
+    "train_info": {
+      "train_size": 174950,
+      "val_size": 19954,
+      "best_val_mean_dailyIC": 0.0342199873983432
+    },
+    "horizon_td": 22,
+    "lookback": 60,
+    "feature_cols": [
+      "open",
+      "high",
+      "low",
+      "close",
+      "volume",
+      "trade_count",
+      "vwap"
+    ],
+    "tcn_cfg": {
+      "kernel_size": 3,
+      "channels": [
+        32,
+        32,
+        32
+      ],
+      "dropout": 0.1,
+      "lr": 0.001,
+      "batch_size": 512,
+      "epochs": 40,
+      "weight_decay": 0.0,
+      "grad_clip": 1.0,
+      "patience": 8,
+      "min_delta": 0.0001,
+      "val_frac": 0.1,
+      "eval_batch_size": 8192,
+      "log_every": 1
+    }
+  },
+  "bundle_info": {
+    "train_size": 174950,
+    "val_size": 19954,
+    "best_val_mean_dailyIC": 0.0342199873983432,
+    "cfg": {
+      "kernel_size": 3,
+      "channels": [
+        32,
+        32,
+        32
+      ],
+      "dropout": 0.1,
+      "lr": 0.001,
+      "batch_size": 512,
+      "epochs": 40,
+      "weight_decay": 0.0,
+      "grad_clip": 1.0,
+      "patience": 8,
+      "min_delta": 0.0001,
+      "val_frac": 0.1,
+      "eval_batch_size": 8192,
+      "log_every": 1
+    }
+  }
+}

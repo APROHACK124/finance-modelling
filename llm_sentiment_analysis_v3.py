@@ -1427,4 +1427,4 @@ if __name__ == '__main__':
     TICKER_UNIVERSE = load_ticker_universe(con)
     ALIAS_MAP = load_alias_map(con)
     con.close()
-    run_daily_sentiment_litellm(per_source_cap= 5, batch_size_posts=10, batch_size_comments=10, batch_size_news=15, batch_size_threads=5, model_name="gpt-5-nano", max_concurrency=6, threads_only=True)
+    run_daily_sentiment_litellm(per_source_cap= 50, batch_size_posts=10, batch_size_comments=10, batch_size_news=15, batch_size_threads=20, model_name="gpt-5-nano", max_concurrency=6, threads_only=True)
